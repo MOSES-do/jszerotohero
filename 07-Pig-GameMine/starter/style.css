@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+  height: 100vh;
+  color: #333;
+  background-image: linear-gradient(to top left, #753682 0%, #bf2e34 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* LAYOUT */
+main {
+  position: relative;
+  width: 100rem;
+  height: 60rem;
+  background-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(200px);
+  filter: blur();
+  box-shadow: 0 3rem 5rem rgba(0, 0, 0, 0.25);
+  border-radius: 9px;
+  overflow: hidden;
+  display: flex;
+}
+
+.player {
+  flex: 50%;
+  padding: 9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.75s;
+}
+
+/* ELEMENTS */
+.name {
+  position: relative;
+  font-size: 4rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  word-spacing: 2px;
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.score {
+  font-size: 8rem;
+  font-weight: 300;
+  color: #c7365f;
+  margin-bottom: auto;
+}
+
+.player--active {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.player--active .name {
+  font-weight: 700;
+}
+.player--active .score {
+  font-weight: 400;
+}
+
+.player--active .current {
+  opacity: 1;
+}
+
+.current {
+  background-color: #c7365f;
+  opacity: 0.8;
+  border-radius: 9px;
+  color: #fff;
+  width: 65%;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.75s;
+}
+
+.current-label {
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-size: 1.7rem;
+  color: #ddd;
+}
+
+.current-score {
+  font-size: 3.5rem;
+}
+
+/* ABSOLUTE POSITIONED ELEMENTS */
+.btn {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #444;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 400;
+  transition: all 0.2s;
+
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+
+  padding: 0.7rem 2.5rem;
+  border-radius: 50rem;
+  box-shadow: 0 1.75rem 3.5rem rgba(0, 0, 0, 0.1);
+}
+
+.btn::first-letter {
+  font-size: 2.4rem;
+  display: inline-block;
+  margin-right: 0.7rem;
+}
+
+.btn--new {
+  top: 4rem;
+}
+.btn--roll {
+  top: 39.3rem;
+}
+.btn--hold {
+  top: 46.1rem;
+}
+
+.btn:active {
+  transform: translate(-50%, 3px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.dice {
+  position: absolute;
+  left: 50%;
+  top: 16.5rem;
+  transform: translateX(-50%);
+  height: 10rem;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.2);
+}
+
+.player--winner {
+  background-color: #2f2f2f;
+}
+
+.player--winner .name {
+  font-weight: 700;
+  color: #c7365f;
+}
+
+.hidden {
+  display: none;
+}
+
+.winner {
+  background-color: '#60b347';
+}
+
+.playerWin {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+
+  /* transform: translateY(-50%, -50%); */
+  font-size: 4rem;
+}
+
+.winBackground {
+  background-color: #302d2d;
+}
+
+/* 
+'use strict';
+
+let playerName0 = prompt('Please enter your name');
+let playerName1 = prompt('Please enter your name');
+
+//player class
+const player1 = document.querySelector('.player--0');
+const player2 = document.querySelector('.player--1');
+
+//names
+const name0 = document.querySelector('#name--0');
+const name1 = document.querySelector('#name--1');
+
+const currentScore1 = document.querySelector('#current--0');
+const currentScore2 = document.querySelector('#current--1');
+
+//loop toggle('.player--active)
+const players = document.querySelectorAll('.player');
+const currentScores = document.querySelectorAll('.current-score');
+
+//cumulative scores
+const scoreEl1 = document.getElementById('score--0');
+const scoreEl2 = document.getElementById('score--1');
+
+//diceroll(img/array)
+const dice = document.querySelector('.dice');
+
+//new game, rematch, roll dice and switchplayer
+const btnNew = document.querySelector('.btn--new');
+const btnRematch = document.querySelector('.btn--rematch');
+const btnRoll = document.querySelector('.btn--roll');
+const btnHold = document.querySelector('.btn--hold');
+const playerWin = document.querySelector('.playerWin');
+
+//current Score from JS
+let scores, activePlayer, currentScore, playing;
+
+const init = () => {
+  activePlayer = 0;
+  scores = [0, 0];
+  currentScore = 0;
+  //State variable
+  playing = true;
+
+  //Starting conditions
+  scoreEl1.textContent = 0;
+  scoreEl2.textContent = 0;
+  dice.classList.add('hidden');
+};
+init();
+
+function displayNames() {
+  if (playerName0 || playerName1) {
+    playerName0 !== ''
+      ? (name0.textContent = playerName0)
+      : (name0.textContent = 'Player 1');
+    playerName1 !== ''
+      ? (name1.textContent = playerName1)
+      : (name1.textContent = 'Player 2');
+  } else {
+    name0.textContent = 'Player 1';
+    name1.textContent = 'Player 2';
+  }
+}
+displayNames();
+
+//check username function
+const userNames = function () {
+  if (!playerName0 || !playerName1) {
+    btnRoll.classList.add('hidden');
+    btnHold.removeEventListener('click', switchPlayer);
+    playerWin.textContent = 'Player names required 🖐️📢';
+    btnRematch.removeEventListener('click', reMatch);
+  }
+};
+userNames();
+
+const reMatch = function () {
+  init();
+  //1. Hide Dice Img
+  dice.classList.add('hidden');
+
+  //Add dice to current score
+
+  document.querySelector('#current--0').textContent = 0;
+  document.querySelector('#current--1').textContent = 0;
+
+  document.querySelector('#score--0').textContent = 0;
+  document.querySelector('#score--1').textContent = 0;
+
+  player1.classList.add('player--active');
+  player2.classList.remove('player--active');
+
+  scoreEl1.style.fontSize = '8rem';
+  scoreEl2.style.fontSize = '8rem';
+
+  btnRoll.classList.remove('hidden');
+  playerWin.classList.add('hidden');
+
+  player1.classList.remove('winBackground');
+  player2.classList.remove('winBackground');
+};
+
+function gameReset() {
+  init();
+  btnRematch.addEventListener('click', reMatch);
+
+  playerName0 = prompt('Please enter your name', 'Player 1');
+  playerName1 = prompt('Please enter your name', 'Computer');
+
+  if (playerName0 || playerName1) {
+    playerName0 !== ''
+      ? (name0.textContent = playerName0)
+      : (name0.textContent = 'Player 1');
+    playerName1 !== ''
+      ? (name1.textContent = playerName1)
+      : (name1.textContent = 'Player 2');
+  } else {
+    name0.textContent = 'Player 1';
+    name1.textContent = 'Player 2';
+  }
+
+  //If "cancel" is chosen by user1 or 2 and "ok" is chosen by user1 or user2. Corrects the issue of null player name
+  if (playerName0 === null) {
+    name0.textContent = 'Player 1';
+  }
+  if (playerName1 === null) {
+    name1.textContent = 'Player 2';
+  }
+  ///////////////////////////////////////////////
+  //1. Hide Dice Img
+  dice.classList.add('hidden');
+
+  document.querySelector('#current--0').textContent = 0;
+  document.querySelector('#current--1').textContent = 0;
+
+  document.querySelector('#score--0').textContent = 0;
+  document.querySelector('#score--1').textContent = 0;
+
+  player1.classList.add('player--active');
+  player2.classList.remove('player--active');
+
+  scoreEl1.style.fontSize = '8rem';
+  scoreEl2.style.fontSize = '8rem';
+
+  btnRoll.classList.remove('hidden');
+  playerWin.classList.add('hidden');
+
+  player1.classList.remove('winBackground');
+  player2.classList.remove('winBackground');
+}
+
+function winner() {
+  //Player 1 wins
+  if (
+    //if score is equal or greater than 30 on switch, then player 1 wins
+
+    scoreEl1.textContent >= 30 &&
+    !player1.classList.contains('.player--active')
+  ) {
+    switchPlayer();
+    playing = false;
+
+    scoreEl1.style.fontSize = '35px';
+    playerWin.classList.remove('hidden');
+    player1.classList.remove('player--active');
+    player2.classList.remove('player--active');
+    player1.classList.add('winBackground');
+    playerWin.textContent =
+      playerName0 !== '' && !null
+        ? `😇 ${playerName0}  wins `
+        : 'Player 1 wins💯';
+
+    //on null result set player name to default of "player 2"
+    if (playerName0 === null) {
+      playerWin.textContent = 'Player 1 wins💯';
+    }
+    dice.classList.add('hidden');
+
+    ///////////////////////////////////
+  } else if (
+    //Player 2 wins
+    scoreEl2.textContent >= 30 &&
+    !player2.classList.contains('.player--active')
+  ) {
+    switchPlayer();
+    playing = false;
+    scoreEl2.style.fontSize = '35px';
+    playerWin.classList.remove('hidden');
+    player1.classList.remove('player--active');
+    player2.classList.remove('player--active');
+    player2.classList.add('winBackground');
+    playerWin.textContent =
+      playerName1 !== '' && !null
+        ? `😇 ${playerName1}  wins`
+        : `Player Two wins 💯 `;
+
+    //on null result set player name to default of "player 2"
+    if (playerName1 === null) {
+      playerWin.textContent = 'Player 2 wins💯';
+    }
+    dice.classList.add('hidden');
+
+    ////////////////////////////////////
+  }
+}
+
+function rollDice() {
+  if (playing) {
+    //1. Generate a random dice roll
+    const diceRoll = Math.trunc(Math.random() * 6) + 1;
+
+    //2. Display Dice
+    dice.classList.remove('hidden');
+    dice.src = `dice-${diceRoll}.png`;
+
+    //3. Check for rolled 1: if true, switch to next player
+    if (diceRoll === 1) {
+      switchPlayer();
+    } else {
+      currentScore += diceRoll;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        currentScore;
+      // console.log(currentScore);
+    }
+  }
+}
+
+//Rolling dice automatically
+btnRoll.addEventListener('click', rollDice);
+
+const switchPlayer = function () {
+  if (playing) {
+    //1. Switch to activePlayer
+    for (let i = 0; i < players.length; i++) {
+      players[i].classList.toggle('player--active');
+    }
+    //set active player to zero
+    document.getElementById(`current--${activePlayer}`).textContent = 0;
+
+    currentScore = 0;
+    //switch to next player--active
+    activePlayer = activePlayer === 0 ? 1 : 0;
+    winner();
+  }
+};
+
+btnHold.addEventListener('click', function () {
+  if (playing) {
+  }
+  //Assigns current score to 0
+  scores[activePlayer] += currentScore;
+  //Add current score to active player
+
+  document.getElementById(`score--${activePlayer}`).textContent =
+    scores[activePlayer];
+
+  //switchPlayer
+  switchPlayer();
+});
+
+btnNew.addEventListener('click', gameReset);
+btnRematch.addEventListener('click', reMatch);
+
+
+*/
