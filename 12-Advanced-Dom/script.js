@@ -516,9 +516,9 @@ btnScrollTo.addEventListener('click', e => {
 // h1.addEventListener('mouseenter', alertH1);
 
 //Event Propagation: Bubbling and Capturing
-//Event B and C is the diff travel points on the dom tree between the root elment and the event element. The movement from the root element to the event element is called Capturing phase and reaching the event element if.e. where the event is set is called target phase and the movement from the target phase through it sparentr elements back to the root element fro execution of callback fn() is called bubbling phase. It is worthy to note that not all events go through all 3 phases.
+//Event B and C is the diff travel points on the dom tree between the root elment and the event element. The movement from the root element to the event element is called Capturing phase and reaching the event element i.e. where the event is set is called target phase and the movement from the target phase through its parent elements back to the root element for execution of callback fn() is called bubbling phase. It is worthy to note that not all events go through all 3 phases.
 
-//Event Propagation in Practice
+//Event Propagation in Practice: Bubbling Phase
 
 //Creating random color codes rgb(255, 255, 255)
 
@@ -550,7 +550,7 @@ console.log(randomColor());
 //     console.log('NAV', e.target, e.currentTarget);
 //   },
 //   false
-// ); //Applying the third parameter true or false enables/disables event listening at the capture phase rather went for the bubble phase
+// ); //Applying the third parameter true or false enables/disables event listening at the capture phase rather wait for the bubble phase
 
 //Dom Traversing: Selecting an element based on another element(relativity) i.e. direct child or direct parent et cetera
 
