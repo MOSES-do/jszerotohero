@@ -14,7 +14,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
-
+    clicks = 0;
     constructor(coords, distance, duration) {
         this.coords = coords; // [lat, lng]
         this.distance = distance; // in km
@@ -25,6 +25,10 @@ class Workout {
         ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${months[this.date.getMonth()]} ${this.date.getDate()}`
+    }
+
+    click() {
+        this.clicks++;
     }
 }
 
@@ -64,19 +68,27 @@ class Cycling extends Workout {
 // const Cycling1 = new Cycling([39, -12], 27, 95, 523)
 // console.log(run1)
 // console.log(Cycling1)
+
 //////////////////////////////////////
 // Application Architecture
 class App {
     //private instance properties
     #map;
     #mapEvent;
+    #mapZoomLevel = 13;
     #workouts = [];
+
     constructor() {
+        //Get user's position
         this._getPosition();
+
+        // Get data from local storage
+        this._getLocalStorage()
 
         form.addEventListener('submit', this._newWorkout.bind(this));
 
         inputType.addEventListener('change', this._toggleElevationField);
+        containerWorkouts.addEventListener('click', this._moveToPopup.bind(this))
     }
 
     _getPosition() {
@@ -94,7 +106,7 @@ class App {
         // console.log(`https://www.google.com/maps/@${latitude},${longitude}`)
 
         const coords = [latitude, longitude];
-        this.#map = L.map('map').setView(coords, 13);
+        this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -108,6 +120,11 @@ class App {
          */
         //Handle click on map
         this.#map.on('click', this._showForm.bind(this));
+
+        // Loading saved map marker on map load from local storage
+        this.#workouts.forEach(work => {
+            this._renderWorkoutMarker(work)
+        })
     }
 
     _showForm(mapE) {
@@ -169,7 +186,7 @@ class App {
             workout = new Cycling([lat, lng], distance, duration, elevation);
             // Add new object to workout array
             this.#workouts.push(workout);
-            console.log(workout);
+            // console.log(workout);
 
         }
         // Render workout on map as marker
@@ -180,6 +197,9 @@ class App {
 
         // Hide form + clear input field
         this._hideForm()
+
+        // Set local storage to all workouts
+        this._setLocalStorage()
     }
 
     _renderWorkoutMarker(workout) {
@@ -210,7 +230,7 @@ class App {
             <span class="workout__value">${workout.duration}</span>
             <span class="workout__unit">min</span>
           </div>
-        `;
+         `;
 
         if (workout.type === 'running')
             html += `
@@ -225,7 +245,7 @@ class App {
             <span class="workout__unit">spm</span>
           </div>
         </li>
-        `;
+         `;
 
         if (workout.type === 'cylcing')
             html += `
@@ -243,6 +263,50 @@ class App {
             `;
 
         form.insertAdjacentHTML('afterend', html)
+    }
+
+    _moveToPopup(e) {
+        // Zoom clicked workout area on map
+        const workoutEl = e.target.closest('.workout');
+        // console.log(workoutEl)
+
+        if (!workoutEl) return;
+
+        const workout = this.#workouts.find(work => work.id === workoutEl.dataset.id);
+        console.log(workout)
+
+        this.#map.setView(workout.coords, this.#mapZoomLevel, {
+            animate: true,
+            pan: {
+                duration: 1,
+            }
+        });
+
+        // workout.click();
+    }
+
+    _setLocalStorage() {
+        localStorage.setItem('workouts', JSON.stringify(this.#workouts))
+    }
+
+    _getLocalStorage() {
+
+        const data = JSON.parse(localStorage.getItem('workouts'));
+        // console.log(data)
+
+        if (!data) return;
+
+        this.#workouts = data
+
+        this.#workouts.forEach(work => {
+            this._renderWorkout(work)
+        })
+    }
+
+    reset() {
+        localStorage.removeItem('workouts');
+        // reload webpage
+        location.reload();
     }
 }
 const app = new App();
